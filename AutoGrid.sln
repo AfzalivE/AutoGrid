@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoGrid", "AutoGrid\AutoGrid.csproj", "{CFA455AC-B1F7-41DB-9E3A-90571C9EB1AD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CFA455AC-B1F7-41DB-9E3A-90571C9EB1AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFA455AC-B1F7-41DB-9E3A-90571C9EB1AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFA455AC-B1F7-41DB-9E3A-90571C9EB1AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFA455AC-B1F7-41DB-9E3A-90571C9EB1AD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
