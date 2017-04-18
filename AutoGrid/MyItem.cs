@@ -71,13 +71,13 @@ namespace AutoGrid {
         }
 
         public void Shrink() {
-            double by = -0.2;
-            ResizeBy(@by, @by, 350, null);
+            const double by = -0.2;
+            ResizeBy(by, by, 350, null);
         }
 
         public void Grow() {
-            double by = 0.2;
-            ResizeBy(@by, @by, 350, null);
+            const double by = 0.2;
+            ResizeBy(by, by, 350, null);
         }
 
         public void Hide(EventHandler onCompleted) {
