@@ -6,7 +6,11 @@
         xmlns:local="clr-namespace:AutoGrid"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
+
+    <Grid Name="MainGrid">
+        <local:GridAdapter
+            x:Name="ItemGrid"/>
+
+        <local:MyItem Visibility="Collapsed" x:Name="MovingItem" Height="200" Width="200"></local:MyItem>
     </Grid>
 </Window>
