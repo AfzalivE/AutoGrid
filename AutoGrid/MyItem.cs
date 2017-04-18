@@ -81,7 +81,7 @@ namespace AutoGrid {
         }
 
         public void Hide(EventHandler onCompleted) {
-            ResizeBy(-1, -1, 350, onCompleted);
+            ResizeBy(-1, -1, 200, onCompleted);
         }
 
         public void Hide(long duration, EventHandler onCompleted) {
