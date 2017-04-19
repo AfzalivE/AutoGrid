@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Shapes;
 
 namespace AutoGrid {
-    public class MyItem : Label {
+    public class MyItem : Thumb {
+        public string Content;
+        private bool _isDragged;
+
         static MyItem() {
 //            DefaultStyleKeyProperty.OverrideMetadata(typeof(MyItem), new FrameworkPropertyMetadata(typeof(MyItem)));
         }
@@ -17,7 +21,31 @@ namespace AutoGrid {
             ScaleTransform scale = new ScaleTransform(1.0, 1.0);
             RenderTransformOrigin = new Point(0.5, 0.5);
             RenderTransform = scale;
+            PreviewMouseLeftButtonUp += OnLeftButtonUp;
+//            MouseLeftButtonUp += OnLeftButtonUp;
+            DragDelta += OnDragDelta;
         }
+
+        private void OnLeftButtonUp(object sender, MouseButtonEventArgs e) {
+            if (!_isDragged) {
+                BorderBrush = Brushes.Black;
+            }
+        }
+
+        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e) {
+            base.OnMouseLeftButtonDown(e);
+            // don't mark as dragged until movement occurs
+            _isDragged = false;
+        }
+
+        private void OnDragDelta(object sender, DragDeltaEventArgs e) {
+            _isDragged = true; // only mark as dragged when actual mvoement occurs
+            Canvas.SetLeft(this, Canvas.GetLeft(this) + e.HorizontalChange);
+            Canvas.SetTop(this, Canvas.GetTop(this) + e.VerticalChange);
+            Canvas.SetRight(this, Canvas.GetRight(this) + e.HorizontalChange);
+            Canvas.SetBottom(this, Canvas.GetBottom(this) + e.VerticalChange);
+        }
+
 
         public void SetContainerRect(int left, int top, int right, int bottom) {
             SetContainerRect(left, top, right, bottom, false);
@@ -127,7 +155,6 @@ namespace AutoGrid {
         }
 
         public void ResizeBy(double widthBy, double heightBy, long duration, EventHandler onCompleted) {
-
             DoubleAnimation wAnim = new DoubleAnimation() {
                 By = widthBy,
                 Duration = new Duration(TimeSpan.FromMilliseconds(duration)),
