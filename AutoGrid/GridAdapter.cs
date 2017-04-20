@@ -44,6 +44,7 @@ namespace AutoGrid {
         private void RecalculateItemSize() {
             double parentWidth = RenderSize.Width;
             double parentHeight = RenderSize.Height;
+//            Console.WriteLine("{0} x {1}", parentWidth, parentHeight);
             Point origin = TransformToAncestor(this).Transform(new Point(0, 0));
             double x = origin.X;
             double y = origin.Y;
@@ -82,12 +83,12 @@ namespace AutoGrid {
         }
 
         private void OnItemAdded() {
-//            OnItemsChanged();
-            Grid = Grid.Recalculate(_items.Count);
-            RecalculateItemSize();
-            this.Children.Add(_items[_items.Count - 1]);
-
-            Console.WriteLine("Item added");
+            OnItemsChanged();
+//            Grid = Grid.Recalculate(_items.Count);
+//            RecalculateItemSize();
+//            this.Children.Add(_items[_items.Count - 1]);
+//
+//            Console.WriteLine("Item added");
         }
 
         public void Remove(int position) {
@@ -123,8 +124,23 @@ namespace AutoGrid {
 //            Console.WriteLine("ItemsRemoved");
         }
 
+        public void Remove(MyItem item) {
+            int index = _items.IndexOf(item);
+            Remove(index);
+        }
+
+        public void MaybeRemove(MyItem item) {
+            int index = _items.IndexOf(item);
+            MaybeRemove(index);
+        }
+
         public List<MyItem> GetItems() {
             return _items;
+        }
+
+        protected override Size MeasureOverride(Size constraint) {
+            Console.WriteLine("Measure");
+            return base.MeasureOverride(constraint);
         }
     }
 }

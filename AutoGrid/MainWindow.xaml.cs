@@ -29,7 +29,7 @@ namespace AutoGrid {
         }
 
         private void OnWindowLoaded(object sender, RoutedEventArgs e) {
-            ItemGrid.RenderSize = new Size(RenderSize.Width, RenderSize.Height);
+//            ItemGrid.RenderSize = new Size(RenderSize.Width, RenderSize.Height);
 
             _items = new List<MyItem>();
             for (int i = 0; i < 10; i++) {
@@ -41,6 +41,17 @@ namespace AutoGrid {
             }
 
             ItemGrid.SetItems(_items);
+
+            var items = new List<MyItem>();
+            for (int i = 0; i < 10; i++) {
+                MyItem myItem = new MyItem {
+                    Content = $"Str {i}"
+                };
+
+                items.Add(myItem);
+            }
+
+            ItemGrid2.SetItems(items);
 
             //ItemGrid.Remove(0);
             //ItemGrid.Remove(3);
@@ -66,13 +77,15 @@ namespace AutoGrid {
 
         public async Task manipulateGrid(int delay) {
             await Task.Delay(delay);
+//            MainGrid.Children.Add(new Button());
+//            MainGrid.Columns = 4;
             if (delay < 5000) {
-                ItemGrid.Remove(6);
+                ItemGrid.DontRemove();
             } else {
                 ItemGrid.Add(new MyItem {
                     Content = $"Str 321"
                 });
-                ItemGrid.DontRemove();
+//                ItemGrid.DontRemove();
 //                ItemGrid.GetItems()[0].Show();
             }
         }

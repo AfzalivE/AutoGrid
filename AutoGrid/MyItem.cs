@@ -10,6 +10,8 @@ namespace AutoGrid {
     public class MyItem : Thumb {
         public string Content;
         private bool _isDragged;
+        private ScaleTransform _scaleTransform;
+        private Transform _translateTransform;
 
         static MyItem() {
 //            DefaultStyleKeyProperty.OverrideMetadata(typeof(MyItem), new FrameworkPropertyMetadata(typeof(MyItem)));
@@ -18,22 +20,25 @@ namespace AutoGrid {
         public MyItem() {
             BorderThickness = new Thickness(2);
             BorderBrush = Brushes.Chartreuse;
-            ScaleTransform scale = new ScaleTransform(1.0, 1.0);
+            _translateTransform = new TranslateTransform();
+            _scaleTransform = new ScaleTransform(1.0, 1.0);
             RenderTransformOrigin = new Point(0.5, 0.5);
-            RenderTransform = scale;
             PreviewMouseLeftButtonUp += OnLeftButtonUp;
-//            MouseLeftButtonUp += OnLeftButtonUp;
             DragDelta += OnDragDelta;
         }
 
         private void OnLeftButtonUp(object sender, MouseButtonEventArgs e) {
             if (!_isDragged) {
+//                Grow();
                 BorderBrush = Brushes.Black;
+            } else {
+                ((GridAdapter) Parent).MaybeRemove(this);
             }
         }
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e) {
             base.OnMouseLeftButtonDown(e);
+//            Shrink();
             // don't mark as dragged until movement occurs
             _isDragged = false;
         }
@@ -45,7 +50,6 @@ namespace AutoGrid {
             Canvas.SetRight(this, Canvas.GetRight(this) + e.HorizontalChange);
             Canvas.SetBottom(this, Canvas.GetBottom(this) + e.VerticalChange);
         }
-
 
         public void SetContainerRect(int left, int top, int right, int bottom) {
             SetContainerRect(left, top, right, bottom, false);
@@ -69,43 +73,14 @@ namespace AutoGrid {
             }
         }
 
-        public void Move(double left, double top, TimeSpan duration, long delay) {
-            Vector offset = VisualTreeHelper.GetOffset(this);
-            double oldLeft = offset.X;
-            double oldTop = offset.Y;
-            TranslateTransform trans = new TranslateTransform();
-
-            RenderTransform = trans;
-
-            DoubleAnimation xAnim = new DoubleAnimation(oldLeft, left, duration) {
-                EasingFunction = new PowerEase {EasingMode = EasingMode.EaseOut},
-                BeginTime = TimeSpan.FromMilliseconds(delay)
-            };
-
-            DoubleAnimation yAnim = new DoubleAnimation(oldTop, top, duration) {
-                EasingFunction = new PowerEase {EasingMode = EasingMode.EaseOut},
-                BeginTime = TimeSpan.FromMilliseconds(delay)
-            };
-
-            Storyboard.SetTarget(xAnim, this);
-            Storyboard.SetTargetProperty(xAnim, new PropertyPath("(Canvas.Left)"));
-            Storyboard.SetTarget(yAnim, this);
-            Storyboard.SetTargetProperty(yAnim, new PropertyPath("(Canvas.Top)"));
-
-            Storyboard moveStoryboard = new Storyboard();
-            moveStoryboard.Children.Add(xAnim);
-            moveStoryboard.Children.Add(yAnim);
-            moveStoryboard.Begin();
-        }
-
         public void Shrink() {
             const double by = -0.2;
-            ResizeBy(by, by, 350, null);
+            ResizeBy(by, by, 75, null);
         }
 
         public void Grow() {
             const double by = 0.2;
-            ResizeBy(by, by, 350, null);
+            ResizeBy(by, by, 75, null);
         }
 
         public void Hide(EventHandler onCompleted) {
@@ -125,18 +100,20 @@ namespace AutoGrid {
         }
 
         public void Show(long duration, EventHandler onCompleted) {
+            RenderTransform = _scaleTransform;
+
             DoubleAnimation wAnim = new DoubleAnimation() {
                 From = 0,
                 To = 1,
                 Duration = new Duration(TimeSpan.FromMilliseconds(duration)),
-                EasingFunction = new PowerEase {EasingMode = EasingMode.EaseOut}
+                EasingFunction = new PowerEase {EasingMode = EasingMode.EaseOut},
             };
 
             DoubleAnimation hAnim = new DoubleAnimation() {
                 From = 0,
                 To = 1,
                 Duration = new Duration(TimeSpan.FromMilliseconds(duration)),
-                EasingFunction = new PowerEase {EasingMode = EasingMode.EaseOut}
+                EasingFunction = new PowerEase {EasingMode = EasingMode.EaseOut},
             };
 
             Storyboard.SetTarget(hAnim, this);
@@ -155,16 +132,18 @@ namespace AutoGrid {
         }
 
         public void ResizeBy(double widthBy, double heightBy, long duration, EventHandler onCompleted) {
+            RenderTransform = _scaleTransform;
+
             DoubleAnimation wAnim = new DoubleAnimation() {
                 By = widthBy,
                 Duration = new Duration(TimeSpan.FromMilliseconds(duration)),
-                EasingFunction = new PowerEase {EasingMode = EasingMode.EaseOut}
+                EasingFunction = new PowerEase {EasingMode = EasingMode.EaseOut},
             };
 
             DoubleAnimation hAnim = new DoubleAnimation() {
                 By = heightBy,
                 Duration = new Duration(TimeSpan.FromMilliseconds(duration)),
-                EasingFunction = new PowerEase {EasingMode = EasingMode.EaseOut}
+                EasingFunction = new PowerEase {EasingMode = EasingMode.EaseOut},
             };
 
             Storyboard.SetTarget(hAnim, this);
@@ -180,6 +159,43 @@ namespace AutoGrid {
                 moveStoryboard.Completed += onCompleted;
             }
             moveStoryboard.Begin();
+        }
+
+        public void Move(double left, double top, TimeSpan duration, long delay) {
+            Vector offset = VisualTreeHelper.GetOffset(this);
+            double oldLeft = offset.X;
+            double oldTop = offset.Y;
+
+            RenderTransform = new TranslateTransform();
+
+            DoubleAnimation xAnim = new DoubleAnimation(oldLeft, left, duration) {
+                EasingFunction = new PowerEase {EasingMode = EasingMode.EaseOut},
+                BeginTime = TimeSpan.FromMilliseconds(delay),
+                FillBehavior = FillBehavior.Stop
+            };
+
+            DoubleAnimation yAnim = new DoubleAnimation(oldTop, top, duration) {
+                EasingFunction = new PowerEase {EasingMode = EasingMode.EaseOut},
+                BeginTime = TimeSpan.FromMilliseconds(delay),
+                FillBehavior = FillBehavior.Stop
+            };
+
+            Storyboard.SetTarget(xAnim, this);
+            Storyboard.SetTargetProperty(xAnim, new PropertyPath("(Canvas.Left)"));
+            Storyboard.SetTarget(yAnim, this);
+            Storyboard.SetTargetProperty(yAnim, new PropertyPath("(Canvas.Top)"));
+
+            Storyboard moveStoryboard = new Storyboard();
+            moveStoryboard.Children.Add(xAnim);
+            moveStoryboard.Children.Add(yAnim);
+
+            moveStoryboard.Completed += (sender, args) => {
+                Canvas.SetLeft(this, left);
+                Canvas.SetTop(this, top);
+            };
+
+            moveStoryboard.Begin();
+
         }
     }
 }
