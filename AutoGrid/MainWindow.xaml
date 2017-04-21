@@ -17,9 +17,16 @@
                      Width="Auto"
                      VerticalAlignment="Stretch"
                      HorizontalAlignment="Stretch">
-            <local:GridAdapter x:Name="ItemGrid" Panel.ZIndex="999" />
+            <local:GridAdapter x:Name="ItemGrid" />
             <local:GridAdapter x:Name="ItemGrid2" />
-
+            <local:GridAdapter x:Name="ItemGrid3" />
+            <local:GridAdapter x:Name="ItemGrid4" />
+            <local:GridAdapter x:Name="ItemGrid5" />
+            <local:GridAdapter x:Name="ItemGrid6" />
+            <local:GridAdapter x:Name="ItemGrid7" />
+            <local:GridAdapter x:Name="ItemGrid8" />
+            <local:GridAdapter x:Name="ItemGrid9" />
         </UniformGrid>
+        <Canvas Name="Temp"/>
     </Grid>
 </Window>

@@ -28,6 +28,54 @@ namespace AutoGrid {
             Loaded += OnWindowLoaded;
         }
 
+        public void StoreInTemp(MyItem item) {
+            Temp.Children.Add(item);
+        }
+
+        public void RetrieveFromTemp() {
+            if (Temp.Children.Count > 0) {
+                MyItem tempChild = (MyItem) Temp.Children[0];
+                Temp.Children.Remove(tempChild);
+                ((GridAdapter) MainGrid.Children[CurrentMouseOverIndex]).Add(tempChild);
+            }
+        }
+
+        protected override void OnPreviewMouseMove(MouseEventArgs e) {
+            Point position = e.GetPosition(this);
+
+            double heightPerItem = MainGrid.ActualHeight / MainGrid.Rows;
+            double widthPerItem = MainGrid.ActualWidth / MainGrid.Columns;
+
+//            Console.WriteLine("Posi: left: {0}, top: {1}", position.X, position.Y);
+
+            int col = (int) Math.Floor(position.X / widthPerItem);
+            int row = (int) Math.Floor(position.Y / heightPerItem);
+
+            // Check because when you're dragging an item
+            // all weird stuff starts to happen
+            if (col >= MainGrid.Columns || row >= MainGrid.Rows || col < 0 || row < 0) {
+                return;
+            }
+
+            int index = col + row * MainGrid.Columns;
+
+            ((GridAdapter) MainGrid.Children[index]).Background = Brushes.Blue;
+
+            for (var i = 0; i < MainGrid.Children.Count; i++) {
+                if (i != index) {
+                    ((GridAdapter) MainGrid.Children[i]).Background = Brushes.Transparent;
+                }
+            }
+
+//            Console.WriteLine("At Row: {0}, Col: {1}", row, col);
+
+            CurrentMouseOverIndex = index;
+
+            base.OnPreviewMouseMove(e);
+        }
+
+        public int CurrentMouseOverIndex { get; set; }
+
         private void OnWindowLoaded(object sender, RoutedEventArgs e) {
 //            ItemGrid.RenderSize = new Size(RenderSize.Width, RenderSize.Height);
 
@@ -42,16 +90,18 @@ namespace AutoGrid {
 
             ItemGrid.SetItems(_items);
 
-            var items = new List<MyItem>();
-            for (int i = 0; i < 10; i++) {
-                MyItem myItem = new MyItem {
-                    Content = $"Str {i}"
-                };
-
-                items.Add(myItem);
-            }
-
-            ItemGrid2.SetItems(items);
+//            for (var j = 1; j < MainGrid.Children.Count; j++) {
+//                var items = new List<MyItem>();
+//                for (int i = 0; i < 10; i++) {
+//                    MyItem myItem = new MyItem {
+//                        Content = $"Str {i}"
+//                    };
+//
+//                    items.Add(myItem);
+//                }
+//
+//                ((GridAdapter) MainGrid.Children[j]).SetItems(items);
+//            }
 
             //ItemGrid.Remove(0);
             //ItemGrid.Remove(3);
@@ -70,9 +120,9 @@ namespace AutoGrid {
 //            MovingItem.ShrinkObject();
 //            MovingItem.GrowObject();
 
-            for (int i = 1; i < 3; i++) {
-                manipulateGrid(i * 3000);
-            }
+//            for (int i = 1; i < 3; i++) {
+//                manipulateGrid(i * 3000);
+//            }
         }
 
         public async Task manipulateGrid(int delay) {

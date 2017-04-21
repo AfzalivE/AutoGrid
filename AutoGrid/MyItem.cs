@@ -12,6 +12,7 @@ namespace AutoGrid {
         private bool _isDragged;
         private ScaleTransform _scaleTransform;
         private Transform _translateTransform;
+        private bool _isMouseDown;
 
         static MyItem() {
 //            DefaultStyleKeyProperty.OverrideMetadata(typeof(MyItem), new FrameworkPropertyMetadata(typeof(MyItem)));
@@ -23,28 +24,44 @@ namespace AutoGrid {
             _translateTransform = new TranslateTransform();
             _scaleTransform = new ScaleTransform(1.0, 1.0);
             RenderTransformOrigin = new Point(0.5, 0.5);
-            PreviewMouseLeftButtonUp += OnLeftButtonUp;
+            PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp;
             DragDelta += OnDragDelta;
         }
 
-        private void OnLeftButtonUp(object sender, MouseButtonEventArgs e) {
+        private void OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e) {
+            if (!_isMouseDown) {
+                Console.WriteLine("Mouse was NOT down");
+                return;
+            }
+            Console.WriteLine("Mouse was down");
+            _isMouseDown = false;
             if (!_isDragged) {
 //                Grow();
+                Console.WriteLine("Mouse was NOT dragged");
                 BorderBrush = Brushes.Black;
             } else {
+                Console.WriteLine("Mouse was dragged");
                 ((GridAdapter) Parent).MaybeRemove(this);
+                ((MainWindow) Application.Current.MainWindow).RetrieveFromTemp();
             }
         }
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e) {
             base.OnMouseLeftButtonDown(e);
+            Console.WriteLine("Mouse is down");
 //            Shrink();
             // don't mark as dragged until movement occurs
+            _isMouseDown = true;
             _isDragged = false;
+//            Panel.SetZIndex(this, 0);
+//            Panel.SetZIndex((UIElement) Parent, 0);
         }
 
         private void OnDragDelta(object sender, DragDeltaEventArgs e) {
-            _isDragged = true; // only mark as dragged when actual mvoement occurs
+            _isDragged = true; // only mark as dragged when actual movement occurs
+            Console.WriteLine("Mouse is dragging");
+//            Panel.SetZIndex(this, 999);
+//            Panel.SetZIndex((UIElement) Parent, 999);
             Canvas.SetLeft(this, Canvas.GetLeft(this) + e.HorizontalChange);
             Canvas.SetTop(this, Canvas.GetTop(this) + e.VerticalChange);
             Canvas.SetRight(this, Canvas.GetRight(this) + e.HorizontalChange);
@@ -61,6 +78,7 @@ namespace AutoGrid {
             this.Width = right - left;
             this.Height = bottom - top;
             if (Parent != null) {
+//                Show();
                 Move(left, top, TimeSpan.FromMilliseconds(250), 0);
             } else {
                 Canvas.SetLeft(this, left);
@@ -68,7 +86,8 @@ namespace AutoGrid {
                 Canvas.SetTop(this, top);
                 Canvas.SetBottom(this, bottom);
                 if (animate) {
-                    Show(350, null);
+//                    Show();
+                    Move(left, top, TimeSpan.FromMilliseconds(250), 0);
                 }
             }
         }
@@ -92,11 +111,28 @@ namespace AutoGrid {
         }
 
         public void Show() {
-            ResizeBy(1, 1, 350, null);
+            Opacity(1, 350);
         }
 
         public void Show(long duration) {
-            ResizeBy(1, 1, duration, null);
+            Opacity(1, duration);
+        }
+
+        public void Opacity(double opacity, long duration) {
+            DoubleAnimation opacityAnim = new DoubleAnimation() {
+                From = 0,
+                To = 1,
+                Duration = new Duration(TimeSpan.FromMilliseconds(duration)),
+                EasingFunction = new PowerEase {EasingMode = EasingMode.EaseOut},
+            };
+
+            Storyboard.SetTarget(opacityAnim, this);
+            Storyboard.SetTargetProperty(opacityAnim, new PropertyPath(OpacityProperty));
+
+            Storyboard opacityStoryboard = new Storyboard();
+            opacityStoryboard.Children.Add(opacityAnim);
+
+            opacityStoryboard.Begin();
         }
 
         public void Show(long duration, EventHandler onCompleted) {
@@ -166,6 +202,11 @@ namespace AutoGrid {
             double oldLeft = offset.X;
             double oldTop = offset.Y;
 
+//            Point transform = TransformToAncestor((Visual) Parent).Transform(new Point(0, 0));
+//            Point transform = TransformToVisual((Visual) Parent).Transform(((Visual) Parent).TransformToAncestor((Visual) Parent).Transform(new Point()));
+
+//            Console.WriteLine("Move: left: {0}, top: {1}", transform.X, transform.Y);
+
             RenderTransform = new TranslateTransform();
 
             DoubleAnimation xAnim = new DoubleAnimation(oldLeft, left, duration) {
@@ -195,7 +236,6 @@ namespace AutoGrid {
             };
 
             moveStoryboard.Begin();
-
         }
     }
 }

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace AutoGrid {
     public class GridAdapter : Canvas {
@@ -17,6 +19,8 @@ namespace AutoGrid {
         public GridAdapter() {
             _items = new List<MyItem>();
             Grid = new Grid(1, 1);
+
+            Background = Brushes.Transparent;
         }
 
         public void SetItems(List<MyItem> items) {
@@ -32,13 +36,13 @@ namespace AutoGrid {
             Grid = Grid.Recalculate(_items.Count);
             RecalculateItemSize();
 
-            Console.WriteLine("ItemsChanged");
-
             this.Children.Clear();
 
             foreach (MyItem t in _items) {
                 this.Children.Add(t);
             }
+
+            Console.WriteLine("ItemsChanged");
         }
 
         private void RecalculateItemSize() {
@@ -78,8 +82,12 @@ namespace AutoGrid {
         }
 
         public void Add(MyItem item) {
-            _items.Add(item);
-            OnItemAdded();
+            if (_itemForRemoval != null && _itemForRemoval.Item2.Equals(item)) {
+                DontRemove();
+            } else {
+                _items.Add(item);
+                OnItemAdded();
+            }
         }
 
         private void OnItemAdded() {
@@ -93,10 +101,9 @@ namespace AutoGrid {
 
         public void Remove(int position) {
             MyItem itemForRemoval = _items[position];
-            itemForRemoval.Hide((sender, args) => {
-                _items.RemoveAt(position);
-                OnItemRemoved(position);
-            });
+            _items.RemoveAt(position);
+            OnItemRemoved(position);
+            ((MainWindow) Application.Current.MainWindow).StoreInTemp(itemForRemoval);
         }
 
         public void MaybeRemove(int position) {
@@ -110,7 +117,7 @@ namespace AutoGrid {
             }
 
             _items.Insert(_itemForRemoval.Item1, _itemForRemoval.Item2);
-            _itemForRemoval.Item2.Show();
+//            _itemForRemoval.Item2.Show();
             OnItemsChanged();
             _itemForRemoval = null;
         }
