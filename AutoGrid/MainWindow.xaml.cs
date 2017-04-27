@@ -20,6 +20,7 @@ namespace AutoGrid {
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
+//        private List<Tuple<GridAdapter, MyItem>> _tempItems;
         private List<MyItem> _items;
 
         public MainWindow() {
@@ -28,17 +29,27 @@ namespace AutoGrid {
             Loaded += OnWindowLoaded;
         }
 
-        public void StoreInTemp(MyItem item) {
-            Temp.Children.Add(item);
+        public UIElement GetTargetGrid(MyItem myItem) {
+            return MainGrid.Children[CurrentMouseOverIndex];
         }
 
-        public void RetrieveFromTemp() {
-            if (Temp.Children.Count > 0) {
-                MyItem tempChild = (MyItem) Temp.Children[0];
-                Temp.Children.Remove(tempChild);
-                ((GridAdapter) MainGrid.Children[CurrentMouseOverIndex]).Add(tempChild);
-            }
+        public void TransferItem(GridAdapter srcGridAdapter, MyItem item) {
+            Tuple<GridAdapter, MyItem> tuple = new Tuple<GridAdapter, MyItem>(srcGridAdapter, item);
+//            _items.Add(tuple);
+            Vector offset = VisualTreeHelper.GetOffset(srcGridAdapter);
+//            Canvas.SetLeft(Temp, offset.X);
+//            Canvas.SetTop(Temp, offset.Y);
+            srcGridAdapter.Remove(item);
+            ((GridAdapter) MainGrid.Children[CurrentMouseOverIndex]).Add(item);
         }
+
+//        public void RetrieveFromTemp() {
+//            if (Temp.Children.Count > 0) {
+//                MyItem tempChild = (MyItem) Temp.Children[0];
+//                Temp.Children.Remove(tempChild);
+//                ((GridAdapter) MainGrid.Children[CurrentMouseOverIndex]).Add(tempChild);
+//            }
+//        }
 
         protected override void OnPreviewMouseMove(MouseEventArgs e) {
             Point position = e.GetPosition(this);
@@ -67,7 +78,7 @@ namespace AutoGrid {
                 }
             }
 
-//            Console.WriteLine("At Row: {0}, Col: {1}", row, col);
+//            Console.WriteLine("At Row: {0}, Col: {1}, index: {2}", row, col, index);
 
             CurrentMouseOverIndex = index;
 
@@ -78,6 +89,11 @@ namespace AutoGrid {
 
         private void OnWindowLoaded(object sender, RoutedEventArgs e) {
 //            ItemGrid.RenderSize = new Size(RenderSize.Width, RenderSize.Height);
+
+            Canvas.SetLeft(Temp, Left);
+            Canvas.SetRight(Temp, Width);
+            Canvas.SetTop(Temp, Top);
+            Canvas.SetBottom(Temp, Height);
 
             _items = new List<MyItem>();
             for (int i = 0; i < 10; i++) {

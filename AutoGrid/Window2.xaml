@@ -1,0 +1,38 @@
+﻿<Window x:Class="AutoGrid.Window2"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AutoGrid"
+        xmlns:gridImpl="clr-namespace:AutoGrid.GridImpl"
+        mc:Ignorable="d"
+        Title="Window2" Height="500" Width="500">
+
+    <Grid Name="father">
+        <UniformGrid
+            x:Name="MainGrid"
+            Rows="3"
+            Columns="3"
+            Height="Auto"
+            Visibility="Visible"
+            Width="Auto"
+            VerticalAlignment="Stretch"
+            HorizontalAlignment="Stretch">
+
+            <gridImpl:GridControl Margin="2,2" x:Name="ItemGrid1" Background="Black" />
+            <Canvas Margin="2,2" x:Name="ItemGrid2" Background="Black">
+                <Thumb></Thumb>
+            </Canvas>
+            <gridImpl:GridControl Margin="2,2" x:Name="ItemGrid3" Background="Black" />
+            <gridImpl:GridControl Margin="2,2" x:Name="ItemGrid4" Background="Black" />
+            <gridImpl:GridControl Margin="2,2" x:Name="ItemGrid5" Background="Black" />
+            <gridImpl:GridControl Margin="2,2" x:Name="ItemGrid6" Background="Black" />
+            <gridImpl:GridControl Margin="2,2" x:Name="ItemGrid7" Background="Black" />
+            <gridImpl:GridControl Margin="2,2" x:Name="ItemGrid8" Background="Black" />
+            <gridImpl:GridControl Margin="2,2" x:Name="ItemGrid9" Background="Black" />
+
+        </UniformGrid>
+
+        <Canvas Name="Temp"/>
+    </Grid>
+</Window>

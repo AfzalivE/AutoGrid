@@ -76,7 +76,7 @@ namespace AutoGrid {
                     int right = (int) ((col + 1) * widthPerItem + x);
                     int bottom = (int) ((row + 1) * heightPerItem + y);
 
-                    item.SetContainerRect(left, top, right, bottom, true);
+                    item.SetContainerRect(this, left, top, right, bottom, true);
                 }
             }
         }
@@ -91,24 +91,24 @@ namespace AutoGrid {
         }
 
         private void OnItemAdded() {
-            OnItemsChanged();
-//            Grid = Grid.Recalculate(_items.Count);
-//            RecalculateItemSize();
-//            this.Children.Add(_items[_items.Count - 1]);
-//
-//            Console.WriteLine("Item added");
+//            OnItemsChanged();
+            Grid = Grid.Recalculate(_items.Count);
+            RecalculateItemSize();
+            this.Children.Add(_items[_items.Count - 1]);
+
+            Console.WriteLine("Item added");
         }
 
         public void Remove(int position) {
             MyItem itemForRemoval = _items[position];
             _items.RemoveAt(position);
             OnItemRemoved(position);
-            ((MainWindow) Application.Current.MainWindow).StoreInTemp(itemForRemoval);
         }
 
         public void MaybeRemove(int position) {
             _itemForRemoval = new Tuple<int, MyItem>(position, _items[position]);
-            Remove(position);
+            ((MainWindow) Application.Current.MainWindow).TransferItem(this, _itemForRemoval.Item2);
+//            Remove(position);
         }
 
         public void DontRemove() {
@@ -119,16 +119,17 @@ namespace AutoGrid {
             _items.Insert(_itemForRemoval.Item1, _itemForRemoval.Item2);
 //            _itemForRemoval.Item2.Show();
             OnItemsChanged();
+//            OnItemAdded();
             _itemForRemoval = null;
         }
 
         private void OnItemRemoved(int position) {
-            OnItemsChanged();
-//            Grid = Grid.Recalculate(_items.Count);
-//            this.Children.RemoveAt(position);
-//            RecalculateItemSize();
-//
-//            Console.WriteLine("ItemsRemoved");
+//            OnItemsChanged();
+            Grid = Grid.Recalculate(_items.Count);
+            this.Children.RemoveAt(position);
+            RecalculateItemSize();
+
+            Console.WriteLine("ItemsRemoved");
         }
 
         public void Remove(MyItem item) {
@@ -146,8 +147,18 @@ namespace AutoGrid {
         }
 
         protected override Size MeasureOverride(Size constraint) {
-            Console.WriteLine("Measure");
+//            Console.WriteLine("Measure");
             return base.MeasureOverride(constraint);
+        }
+
+        public void Add(Tuple<GridAdapter, MyItem> tuple) {
+            MyItem item = tuple.Item2;
+            tuple.Item1.Remove(item);
+            _items.Add(item);
+
+            Grid = Grid.Recalculate(_items.Count);
+            RecalculateItemSize();
+            this.Children.Add(_items[_items.Count - 1]);
         }
     }
 }

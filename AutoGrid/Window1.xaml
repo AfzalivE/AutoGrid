@@ -1,0 +1,43 @@
+﻿<Window x:Class="AutoGrid.Window1"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AutoGrid"
+        mc:Ignorable="d"
+        Title="Window1" Height="500" Width="500">
+    <Grid Name="father">
+
+        <UniformGrid
+            Name="MainGrid"
+            Rows="3"
+            Columns="3"
+            Height="Auto"
+            Width="Auto"
+            VerticalAlignment="Stretch"
+            HorizontalAlignment="Stretch">
+
+            <Canvas Name="child1"
+                    Margin="10, 10"
+                    Background="Black" />
+
+            <Canvas Name="child3"
+                    Margin="10, 10"
+                    Background="Black" />
+
+        </UniformGrid>
+
+        <Canvas Name="child2"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Margin="10, 10"
+                ZIndex="0"
+                Height="100"
+                Width="100"
+                Background="Black">
+
+            <local:MyThumb x:Name="grandchild" Background="Blue" />
+
+        </Canvas>
+    </Grid>
+</Window>
