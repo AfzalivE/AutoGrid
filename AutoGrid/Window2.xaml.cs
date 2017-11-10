@@ -33,7 +33,7 @@ namespace AutoGrid {
                 _items.Add(item);
             }
 
-            ItemGrid1.SetItems(_items);
+            ItemGrid2.SetItems(_items);
         }
     }
 

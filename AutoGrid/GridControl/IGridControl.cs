@@ -4,8 +4,8 @@ using System.Windows.Media;
 
 namespace AutoGrid {
     public abstract class IGridControl : Canvas {
-        protected List<IGridItem> Items;
-        protected GridSize Grid;
+        public List<IGridItem> Items;
+        public GridSize Grid;
 
         public IGridControl() {
             Items = new List<IGridItem>();
@@ -21,7 +21,7 @@ namespace AutoGrid {
         public abstract void OnItemsChanged();
 
         // when a new item is added, which wasn't present in another GridControl before
-        public abstract void Add();
+        public abstract void Add(IGridItem gridItem);
 
         // when an item is removed completely
         // i.e. when it has been moved to another GridControl, or deleted

@@ -9,7 +9,7 @@
         Title="Window2" Height="500" Width="500">
 
     <Grid Name="father">
-        <UniformGrid
+        <gridImpl:GridContainer
             x:Name="MainGrid"
             Rows="3"
             Columns="3"
@@ -20,9 +20,7 @@
             HorizontalAlignment="Stretch">
 
             <gridImpl:GridControl Margin="2,2" x:Name="ItemGrid1" Background="Black" />
-            <Canvas Margin="2,2" x:Name="ItemGrid2" Background="Black">
-                <Thumb></Thumb>
-            </Canvas>
+            <gridImpl:GridControl Margin="2,2" x:Name="ItemGrid2" Background="Black" />
             <gridImpl:GridControl Margin="2,2" x:Name="ItemGrid3" Background="Black" />
             <gridImpl:GridControl Margin="2,2" x:Name="ItemGrid4" Background="Black" />
             <gridImpl:GridControl Margin="2,2" x:Name="ItemGrid5" Background="Black" />
@@ -31,8 +29,8 @@
             <gridImpl:GridControl Margin="2,2" x:Name="ItemGrid8" Background="Black" />
             <gridImpl:GridControl Margin="2,2" x:Name="ItemGrid9" Background="Black" />
 
-        </UniformGrid>
+        </gridImpl:GridContainer>
 
-        <Canvas Name="Temp"/>
+        <Canvas Name="Temp" />
     </Grid>
 </Window>

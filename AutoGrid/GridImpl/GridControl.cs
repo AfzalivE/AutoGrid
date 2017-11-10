@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace AutoGrid.GridImpl {
     public class GridControl : IGridControl {
+        private int _defaultZIndex;
+
+        public GridControl() {
+            _defaultZIndex = Panel.GetZIndex(this);
+        }
 
         public override void SetItems(List<IGridItem> items) {
             Items.Clear();
@@ -17,7 +23,7 @@ namespace AutoGrid.GridImpl {
         public override void OnItemsChanged() {
             // calculate future item sizes
 
-            Grid.Recalculate(Items.Count, RenderSize.Width, RenderSize.Height, TransformToAncestor(this).Transform(new Point(0, 0)));
+            RecalculateGrid(Items.Count);
             for (var i = 0; i < Items.Count; i++) {
                 Rect itemRect = Grid.GetItemRect(i);
                 Items[i].SetSize(itemRect);
@@ -30,8 +36,13 @@ namespace AutoGrid.GridImpl {
             });
         }
 
-        public override void Add() {
-            throw new System.NotImplementedException();
+        public void RecalculateGrid(int itemsCount) {
+            Grid.Recalculate(itemsCount, RenderSize.Width, RenderSize.Height, TransformToAncestor(this).Transform(new Point(0, 0)));
+        }
+
+        public override void Add(IGridItem gridItem) {
+            Items.Add(gridItem);
+            Children.Add(gridItem);
         }
 
         public override void Remove() {
@@ -44,6 +55,22 @@ namespace AutoGrid.GridImpl {
 
         public override void SetAllItemSizes() {
             throw new System.NotImplementedException();
+        }
+
+        public void HandleItemDrag(IGridItem gridItem) {
+            GetParent().HandleItemDrag(gridItem);
+        }
+
+        public void MoveToTop() {
+            Panel.SetZIndex(this, 999);
+        }
+
+        public void MoveToBottom() {
+            Panel.SetZIndex(this, _defaultZIndex);
+        }
+
+        public GridContainer GetParent() {
+            return (GridContainer) Parent;
         }
     }
 }

@@ -32,9 +32,14 @@ namespace AutoGrid {
             Canvas.SetRight(grandchild, 0);
             Canvas.SetBottom(grandchild, 0);
 
-            Move(2000);
+//            Move(2000);
+            Resize(1000);
 
             ShowPosition();
+        }
+
+        private void Resize(int duration) {
+            
         }
 
         private void MoveGc() {
